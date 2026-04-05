@@ -2360,6 +2360,10 @@ ul, ol { list-style: none; }
   background: var(--accent-success-light);
   color: var(--accent-success);
 }
+.booking-history-status.inquiry_sent {
+  background: var(--accent-primary-light);
+  color: var(--accent-primary);
+}
 .booking-history-status.pending {
   background: var(--accent-warning-light);
   color: var(--accent-warning);
@@ -4994,19 +4998,39 @@ function updateDashboard() {
     bookingsList.innerHTML = '<p style="color:var(--text-tertiary);text-align:center;padding:40px 0;">No bookings yet. Start exploring hotels!</p>';
   } else {
     bookingsList.innerHTML = userData.bookings.map(b => {
-      const hotel = HOTELS.find(h => h.id === b.hotelId);
+      const hotel = [...HOTELS, ...DORMS].find(h => h.id === b.hotelId);
       const img = hotel?.image || b.hotelImage;
+      const cat = b.type || 'hotel';
+      
+      let detailsHTML = '';
+      if (cat === 'hotel') {
+        detailsHTML = `<div class="booking-history-dates">${b.checkIn} → ${b.checkOut} · ${b.rooms} room(s)</div>`;
+      } else if (cat === 'condo') {
+        detailsHTML = `<div class="booking-history-dates">Move-in: ${b.moveInDate} · Term: ${b.leaseTerm} · View: ${b.viewingSchedule}</div>`;
+      } else if (cat === 'apartment') {
+        detailsHTML = `<div class="booking-history-dates">Move-in: ${b.moveInDate} · Parking: ${b.parking.toUpperCase()} · Pets: ${b.pets.toUpperCase()}</div>`;
+      } else if (cat === 'dorm') {
+        detailsHTML = `<div class="booking-history-dates">${b.semester.toUpperCase()} · Mode: ${b.sharing.toUpperCase()} · ${b.university}</div>`;
+      }
+
+      const statusText = b.status === 'confirmed' ? 'Confirmed' : 'Inquiry Sent';
+      const priceVal = b.total ? `PHP ${b.total.toLocaleString()}` : b.priceSummary;
+      const priceLabel = b.total ? 'Total' : 'Est. Monthly';
+
       return `
         <div class="booking-history-item">
           <div class="booking-history-thumb"><img src="${img}" alt="${b.hotelName}" onerror="this.style.background='var(--bg-tertiary)'"></div>
           <div class="booking-history-info">
-            <div class="booking-history-name">${b.hotelName}</div>
-            <div class="booking-history-dates">${b.checkIn} → ${b.checkOut} · ${b.rooms} room(s)</div>
-            <span class="booking-history-status ${b.status}">${b.status.charAt(0).toUpperCase() + b.status.slice(1)}</span>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+              <div class="booking-history-name">${b.hotelName}</div>
+              <span class="booking-hotel-cat-tag category-${cat}" style="font-size:0.65rem; padding:2px 6px;">${cat.toUpperCase()}</span>
+            </div>
+            ${detailsHTML}
+            <span class="booking-history-status ${b.status}">${statusText}</span>
           </div>
           <div class="booking-history-price">
-            <div class="booking-history-amount">PHP ${b.total.toLocaleString()}</div>
-            <div class="booking-history-per">Total</div>
+            <div class="booking-history-amount" style="font-size:0.9rem">${priceVal}</div>
+            <div class="booking-history-per">${priceLabel}</div>
           </div>
         </div>
       `;
