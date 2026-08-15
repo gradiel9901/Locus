@@ -3,36 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Locus</title>
+<title>Locus | Premium Hotel & Accommodation Booking</title>
 <link rel="icon" type="image/png" href="images/Logo.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 /* ============================================
-   CSS CUSTOM PROPERTIES & THEME SYSTEM
+   PREMIUM CSS CUSTOM PROPERTIES & THEME SYSTEM
    ============================================ */
 :root {
+  /* Typography Scale */
   --font-body: 'Outfit', sans-serif;
   --font-heading: 'Playfair Display', serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --lh-tight: 1.2;
-  --lh-relaxed: 1.6;
+  
+  /* Line Heights */
+  --lh-tight: 1.15;
+  --lh-normal: 1.4;
+  --lh-relaxed: 1.65;
+  
+  /* Easing Functions - Premium Curves */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring-bounce: cubic-bezier(0.5, 1.4, 0.6, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Radius System */
+  --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
+  --radius-2xl: 32px;
   --radius-full: 9999px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 14px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-xl: 0 20px 60px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.08);
-  --transition-fast: 150ms var(--ease-smooth);
-  --transition-normal: 300ms var(--ease-smooth);
-  --transition-slow: 500ms var(--ease-out-expo);
+  
+  /* Shadow System - Layered Depth */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04), 0 1px 1px rgba(0,0,0,0.02);
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.05);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.06);
+  --shadow-2xl: 0 24px 64px rgba(0,0,0,0.15), 0 12px 24px rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+  --shadow-glow-lg: 0 0 80px rgba(99, 102, 241, 0.4);
+  
+  /* Transitions */
+  --transition-instant: 100ms var(--ease-smooth);
+  --transition-fast: 200ms var(--ease-smooth);
+  --transition-normal: 350ms var(--ease-out-expo);
+  --transition-slow: 600ms var(--ease-out-expo);
+  --transition-slower: 900ms var(--ease-out-expo);
+  --transition-spring: 500ms var(--ease-spring);
+  
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
 }
 
 [data-theme="light"] {
@@ -2557,6 +2595,152 @@ ul, ol { list-style: none; }
 }
 .page-view.active {
   display: block;
+  animation: fadeIn 0.4s var(--ease-out-expo) both;
+}
+
+/* ============================================
+   SCROLL-TRIGGERED ANIMATIONS
+   ============================================ */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s var(--ease-out-expo);
+}
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-on-scroll.from-left {
+  transform: translateX(-60px);
+}
+.reveal-on-scroll.from-right {
+  transform: translateX(60px);
+}
+.reveal-on-scroll.scale-up {
+  transform: scale(0.9);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* Parallax Effect Class */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+}
+
+/* Premium Card Hover Lift */
+.card-lift {
+  transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+}
+.card-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-2xl);
+}
+
+/* Gradient Border Animation */
+.gradient-border {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radius-xl);
+  background: var(--gradient-primary);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+.gradient-border:hover::before {
+  opacity: 1;
+}
+
+/* Shimmer Loading Effect */
+.shimmer {
+  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-hover) 50%, var(--bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Pulse Glow for Active Elements */
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.5); }
+}
+
+/* Magnetic Button Effect */
+.magnetic-btn {
+  position: relative;
+  overflow: hidden;
+}
+.magnetic-btn::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo);
+}
+.magnetic-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Text Reveal Animation */
+.text-reveal {
+  display: inline-block;
+  overflow: hidden;
+}
+.text-reveal span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: textRevealAnim 0.8s var(--ease-out-expo) forwards;
+}
+@keyframes textRevealAnim {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Number Counter Animation */
+.counter-animate {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Smooth Image Reveal */
+.image-reveal {
+  position: relative;
+  overflow: hidden;
+}
+.image-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-primary);
+  transform: scaleX(1);
+  transform-origin: right;
+  transition: transform 0.8s var(--ease-in-out);
+  z-index: 1;
+}
+.image-reveal.loaded::after {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.image-reveal img {
+  transition: transform 0.8s var(--ease-out-expo);
+}
+.image-reveal:hover img {
+  transform: scale(1.05);
 }
 
 /* ============================================
@@ -2738,16 +2922,16 @@ ul, ol { list-style: none; }
     </div>
     <div class="container">
       <div class="hero-content">
-        <div class="hero-badge">
+        <div class="hero-badge reveal-on-scroll">
           <span class="hero-badge-dot">
             <svg viewBox="0 0 24 24" width="12" height="12" stroke="white" fill="none" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </span>
           Discover stays across Metro Manila
         </div>
         <h1 class="hero-title">Find your perfect <span class="text-gradient">stay</span> in the Philippines</h1>
-        <p class="hero-subtitle">From luxury hotels in BGC to affordable dorms near QC universities — Locus helps you find, book, and chat with hosts in real-time.</p>
+        <p class="hero-subtitle reveal-on-scroll reveal-delay-1">From luxury hotels in BGC to affordable dorms near QC universities — Locus helps you find, book, and chat with hosts in real-time.</p>
 
-        <div class="search-box">
+        <div class="search-box reveal-on-scroll reveal-delay-2">
           <div class="search-box-inner">
             <div class="search-field">
               <span class="icon" style="font-size:1.1rem"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
@@ -2775,17 +2959,17 @@ ul, ol { list-style: none; }
           </div>
         </div>
 
-        <div class="hero-stats">
+        <div class="hero-stats reveal-on-scroll reveal-delay-3">
           <div class="hero-stat">
-            <div class="hero-stat-value" data-count="2847">0</div>
+            <div class="hero-stat-value counter-animate" data-count="2847">0</div>
             <div class="hero-stat-label">Hotels & Dorms</div>
           </div>
           <div class="hero-stat">
-            <div class="hero-stat-value" data-count="4">0</div>
+            <div class="hero-stat-value counter-animate" data-count="4">0</div>
             <div class="hero-stat-label">Cities Covered</div>
           </div>
           <div class="hero-stat">
-            <div class="hero-stat-value" data-count="15420">0</div>
+            <div class="hero-stat-value counter-animate" data-count="15420">0</div>
             <div class="hero-stat-label">Happy Travelers</div>
           </div>
         </div>
@@ -2796,7 +2980,7 @@ ul, ol { list-style: none; }
   <!-- Cities Section -->
   <section class="section">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <div class="section-label">
           <span class="icon" style="width:14px;height:14px"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
           Popular Destinations
@@ -2805,7 +2989,7 @@ ul, ol { list-style: none; }
         <p class="section-desc">Discover the best accommodations across the most vibrant cities in the Philippines.</p>
       </div>
       <div class="cities-grid">
-        <div class="city-card animate-fadeInUp stagger-1" onclick="navigateTo('hotels');filterByCity('Quezon City')">
+        <div class="city-card reveal-on-scroll reveal-delay-1 card-lift image-reveal" onclick="navigateTo('hotels');filterByCity('Quezon City')">
           <div class="city-card-bg" style="background-image: url('images/Hero/Quezon City.png')"></div>
           <div class="city-card-overlay"></div>
           <div class="city-card-content">
@@ -2813,7 +2997,7 @@ ul, ol { list-style: none; }
             <div class="city-card-count">847 properties</div>
           </div>
         </div>
-        <div class="city-card animate-fadeInUp stagger-2" onclick="navigateTo('hotels');filterByCity('Manila')">
+        <div class="city-card reveal-on-scroll reveal-delay-2 card-lift image-reveal" onclick="navigateTo('hotels');filterByCity('Manila')">
           <div class="city-card-bg" style="background-image: url('images/Hero/Manila.png')"></div>
           <div class="city-card-overlay"></div>
           <div class="city-card-content">
@@ -2821,7 +3005,7 @@ ul, ol { list-style: none; }
             <div class="city-card-count">1,203 properties</div>
           </div>
         </div>
-        <div class="city-card animate-fadeInUp stagger-3" onclick="navigateTo('hotels');filterByCity('Mandaluyong')">
+        <div class="city-card reveal-on-scroll reveal-delay-3 card-lift image-reveal" onclick="navigateTo('hotels');filterByCity('Mandaluyong')">
           <div class="city-card-bg" style="background-image: url('images/Hero/Mandaluyon City.png')"></div>
           <div class="city-card-overlay"></div>
           <div class="city-card-content">
@@ -2829,7 +3013,7 @@ ul, ol { list-style: none; }
             <div class="city-card-count">534 properties</div>
           </div>
         </div>
-        <div class="city-card animate-fadeInUp stagger-4" onclick="navigateTo('hotels');filterByCity('BGC')">
+        <div class="city-card reveal-on-scroll reveal-delay-4 card-lift image-reveal" onclick="navigateTo('hotels');filterByCity('BGC')">
           <div class="city-card-bg" style="background-image: url('images/Hero/BGC.png')"></div>
           <div class="city-card-overlay"></div>
           <div class="city-card-content">
@@ -2844,7 +3028,7 @@ ul, ol { list-style: none; }
   <!-- Top Recommendations -->
   <section class="section" style="background:var(--bg-tertiary)">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <div class="section-label">
           <span class="icon" style="width:14px;height:14px"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
           Top Picks
@@ -2859,7 +3043,7 @@ ul, ol { list-style: none; }
   <!-- Why Locus -->
   <section class="section">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <div class="section-label">
           <span class="icon" style="width:14px;height:14px"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span>
           Why Locus
@@ -2867,7 +3051,7 @@ ul, ol { list-style: none; }
         <h2 class="section-title">Built for modern travelers</h2>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;">
-        <div style="padding:24px;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-xl);transition:all var(--transition-slow);" onmouseenter="this.style.borderColor='var(--accent-primary)'" onmouseleave="this.style.borderColor='var(--border-primary)'">
+        <div class="reveal-on-scroll reveal-delay-1 gradient-border card-lift" style="padding:24px;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-xl);transition:all var(--transition-slow);" onmouseenter="this.style.borderColor='var(--accent-primary)'" onmouseleave="this.style.borderColor='var(--border-primary)'">
           <div style="width:48px;height:48px;background:var(--accent-primary-light);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:var(--accent-primary)">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
@@ -5170,17 +5354,85 @@ const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
 const animationObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
+      entry.target.classList.add('is-revealed');
+      // Unobserve after revealing to improve performance
+      animationObserver.unobserve(entry.target);
     }
   });
 }, observerOptions);
 
-document.querySelectorAll('.city-card, .hotel-card, .dorm-card').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(30px)';
-  el.style.transition = 'opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo)';
+// Observe all reveal-on-scroll elements
+document.querySelectorAll('.reveal-on-scroll').forEach(el => {
   animationObserver.observe(el);
+});
+
+// Legacy support for city-card, hotel-card, dorm-card animations
+document.querySelectorAll('.city-card, .hotel-card, .dorm-card').forEach(el => {
+  if (!el.classList.contains('reveal-on-scroll')) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo)';
+    animationObserver.observe(el);
+  }
+});
+
+// ============================================
+// SCROLL-TRIGGERED NAVBAR TRANSFORMATION
+// ============================================
+let lastScrollY = window.scrollY;
+let ticking = false;
+
+function updateNavbar() {
+  const navbar = document.getElementById('navbar');
+  const scrollY = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const scrollRatio = Math.min(scrollY / docHeight, 1);
+  
+  // Update CSS custom property for mathematical navbar scaling
+  navbar.style.setProperty('--scroll-ratio', scrollRatio);
+  
+  // Add scrolled class for additional styling
+  if (scrollY > 50) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+  
+  ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(updateNavbar);
+    ticking = true;
+  }
+}, { passive: true });
+
+// ============================================
+// MAGNETIC BUTTON EFFECT
+// ============================================
+document.querySelectorAll('.magnetic-btn').forEach(btn => {
+  btn.addEventListener('mousemove', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    btn.style.setProperty('--x', `${x}px`);
+    btn.style.setProperty('--y', `${y}px`);
+  });
+});
+
+// ============================================
+// SMOOTH SCROLL WITH PARALLAX
+// ============================================
+document.querySelectorAll('[data-parallax]').forEach(el => {
+  const speed = el.getAttribute('data-parallax') || 0.5;
+  window.addEventListener('scroll', () => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      const yPos = (window.innerHeight - rect.top) * speed;
+      el.style.transform = `translateY(${yPos}px)`;
+    }
+  }, { passive: true });
 });
 
 // ============================================
@@ -5188,6 +5440,48 @@ document.querySelectorAll('.city-card, .hotel-card, .dorm-card').forEach(el => {
 // ============================================
 renderFeaturedStays();
 animateCounters();
+
+// ============================================
+// PAGE LOAD ANIMATIONS
+// ============================================
+window.addEventListener('load', () => {
+  // Hide loading screen with fade out
+  setTimeout(() => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+      loadingScreen.style.opacity = '0';
+      loadingScreen.style.transition = 'opacity 0.4s var(--ease-out-expo)';
+      setTimeout(() => {
+        loadingScreen.style.display = 'none';
+      }, 400);
+    }
+  }, 800);
+  
+  // Trigger initial reveal animations
+  document.querySelectorAll('.animate-fadeInUp, .animate-fadeIn, .animate-scaleIn').forEach(el => {
+    el.style.animationPlayState = 'running';
+  });
+});
+
+// ============================================
+// PERFORMANCE OPTIMIZATION - LAZY LOADING IMAGES
+// ============================================
+const imageObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        img.classList.add('loaded');
+        imageObserver.unobserve(img);
+      }
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('img[data-src]').forEach(img => {
+  imageObserver.observe(img);
+});
 </script>
 <!-- Refraction SVG Filter for Liquid Glass Deformation -->
 <svg style="visibility: hidden; position: absolute;" width="0" height="0">
